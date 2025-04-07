@@ -1,10 +1,9 @@
-
 import MainLayout from "@/components/layout/MainLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExternalLink, FileText, Video, Tool } from "lucide-react";
+import { ExternalLink, FileText, Video, Wrench } from "lucide-react";
 
 type Resource = {
   id: string;
@@ -174,7 +173,7 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
       case "article":
         return <ExternalLink className="h-5 w-5" />;
       case "tool":
-        return <Tool className="h-5 w-5" />;
+        return <Wrench className="h-5 w-5" />;
       default:
         return <FileText className="h-5 w-5" />;
     }
