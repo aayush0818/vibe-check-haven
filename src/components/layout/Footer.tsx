@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-lg font-bold mb-4">Vibe Check Haven</h3>
+            <h3 className="text-lg font-bold mb-4">Moodly</h3>
             <p className="text-sm text-gray-600 mb-4">
               Your safe space to check in with yourself, track your feelings, and grow.
             </p>
@@ -20,6 +20,7 @@ const Footer = () => {
               <li><Link to="/daily-check" className="text-sm hover:text-teal">Daily Check</Link></li>
               <li><Link to="/journal" className="text-sm hover:text-teal">Journal</Link></li>
               <li><Link to="/mood-tracker" className="text-sm hover:text-teal">Mood Tracker</Link></li>
+              <li><Link to="/community" className="text-sm hover:text-teal">Community</Link></li>
             </ul>
           </div>
           
@@ -42,7 +43,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-border/30 mt-8 pt-8 text-center text-sm text-gray-600">
-          <p>© {new Date().getFullYear()} Vibe Check Haven. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Moodly. All rights reserved.</p>
           <p className="mt-2">Made with care for your mental wellbeing.</p>
         </div>
       </div>

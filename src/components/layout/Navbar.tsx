@@ -8,7 +8,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
           <span className="text-2xl font-bold bg-gradient-to-r from-teal to-lavender bg-clip-text text-transparent">
-            Vibe Check Haven
+            Moodly
           </span>
         </Link>
         
@@ -28,10 +28,18 @@ const Navbar = () => {
           <Button variant="ghost" asChild>
             <Link to="/resources">Resources</Link>
           </Button>
+          <Button variant="ghost" asChild>
+            <Link to="/community">Community</Link>
+          </Button>
         </div>
         
         <div className="flex items-center gap-4">
-          <Button className="btn-primary">Sign In</Button>
+          <Button asChild variant="outline">
+            <Link to="/sign-in">Sign In</Link>
+          </Button>
+          <Button className="btn-primary">
+            <Link to="/sign-up">Sign Up</Link>
+          </Button>
         </div>
       </div>
     </nav>

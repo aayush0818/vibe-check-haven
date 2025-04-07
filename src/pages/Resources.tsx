@@ -22,7 +22,7 @@ const resourcesData: Resource[] = [
     description: "A comprehensive guide with practical exercises and strategies to manage anxiety in daily life.",
     type: "pdf",
     source: "Mind.org",
-    url: "#",
+    url: "https://www.mind.org.uk/information-support/types-of-mental-health-problems/anxiety-and-panic-attacks/self-care/",
     tags: ["anxiety", "self-help", "exercises"]
   },
   {
@@ -31,7 +31,7 @@ const resourcesData: Resource[] = [
     description: "Evidence-based approaches to understand and manage symptoms of depression.",
     type: "pdf",
     source: "NHS",
-    url: "#",
+    url: "https://www.nhs.uk/mental-health/self-help/guides-tools-and-activities/depression-anxiety-self-assessment-quiz/",
     tags: ["depression", "self-help", "healthcare"]
   },
   {
@@ -40,7 +40,7 @@ const resourcesData: Resource[] = [
     description: "Learn practical cognitive techniques to break the cycle of rumination and overthinking.",
     type: "video",
     source: "Therapy in a Nutshell",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    url: "https://www.youtube.com/watch?v=JOwNKAV9_Mg",
     tags: ["overthinking", "anxiety", "cognitive"]
   },
   {
@@ -49,7 +49,7 @@ const resourcesData: Resource[] = [
     description: "Explore the research behind what actually makes humans happy and how to apply it to your life.",
     type: "video",
     source: "AsapSCIENCE",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    url: "https://www.youtube.com/watch?v=oHv6vTKD6lg",
     tags: ["happiness", "science", "positive psychology"]
   },
   {
@@ -58,7 +58,7 @@ const resourcesData: Resource[] = [
     description: "Thoughtful insights on finding peace and meaning in everyday life challenges.",
     type: "article",
     source: "Tiny Buddha",
-    url: "#",
+    url: "https://tinybuddha.com/",
     tags: ["mindfulness", "wisdom", "life challenges"]
   },
   {
@@ -67,7 +67,7 @@ const resourcesData: Resource[] = [
     description: "A guide to navigating challenging discussions with confidence and empathy.",
     type: "article",
     source: "The Mighty",
-    url: "#",
+    url: "https://themighty.com/topic/mental-health/",
     tags: ["communication", "relationships", "social skills"]
   },
   {
@@ -76,7 +76,7 @@ const resourcesData: Resource[] = [
     description: "Evidence-based strategies for better sleep quality and establishing healthy sleep routines.",
     type: "pdf",
     source: "Sleep Foundation",
-    url: "#",
+    url: "https://www.sleepfoundation.org/sleep-hygiene",
     tags: ["sleep", "health", "habits"]
   },
   {
@@ -85,8 +85,26 @@ const resourcesData: Resource[] = [
     description: "Learn simple breathing exercises that can help reduce anxiety and stress in minutes.",
     type: "tool",
     source: "Calm App",
-    url: "#",
+    url: "https://www.calm.com/breathe",
     tags: ["anxiety", "stress", "breathing", "techniques"]
+  },
+  {
+    id: "9",
+    title: "NIMHANS Digital Academy Resources",
+    description: "Mental health resources from India's premier mental health institution.",
+    type: "pdf",
+    source: "NIMHANS",
+    url: "https://nimhans.ac.in/",
+    tags: ["india", "resources", "mental health"]
+  },
+  {
+    id: "10",
+    title: "The Happiness Project India",
+    description: "India-focused mental health resources and wellness strategies.",
+    type: "article",
+    source: "The Happiness Project",
+    url: "https://www.thehappinessindia.com/",
+    tags: ["india", "happiness", "wellness"]
   }
 ];
 
@@ -96,7 +114,8 @@ const categories = [
   { id: "depression", label: "Low Mood" },
   { id: "sleep", label: "Sleep Help" },
   { id: "relationships", label: "Relationships" },
-  { id: "selfcare", label: "Self-Care" }
+  { id: "selfcare", label: "Self-Care" },
+  { id: "india", label: "Indian Resources" }
 ];
 
 const ResourceCard = ({ resource }: { resource: Resource }) => {
@@ -256,6 +275,21 @@ const Resources = () => {
               }
             </div>
           </TabsContent>
+          
+          <TabsContent value="india" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {resourcesData
+                .filter((resource) => 
+                  resource.tags.some(tag => 
+                    ["india"].includes(tag)
+                  )
+                )
+                .map((resource) => (
+                  <ResourceCard key={resource.id} resource={resource} />
+                ))
+              }
+            </div>
+          </TabsContent>
         </Tabs>
         
         <div className="bg-gradient-to-r from-lavender/20 to-teal/20 rounded-3xl p-10 text-center my-12">
@@ -263,8 +297,39 @@ const Resources = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
             While these resources can be helpful, they're not a replacement for professional help. If you're struggling, consider reaching out to a mental health professional.
           </p>
-          <Button className="btn-primary" asChild>
-            <a href="https://findatherapist.com" target="_blank" rel="noopener noreferrer">
+          
+          <div className="space-y-6 max-w-2xl mx-auto text-left bg-white/80 p-6 rounded-xl shadow-sm">
+            <h3 className="text-xl font-semibold">Indian Mental Health Helplines</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium">NIMHANS Helpline</h4>
+                <p className="text-sm text-muted-foreground">24x7 Toll-Free Mental Health Rehabilitation</p>
+                <a href="tel:08046110007" className="text-teal font-bold block mt-2">080-4611 0007</a>
+              </div>
+              
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium">Vandrevala Foundation</h4>
+                <p className="text-sm text-muted-foreground">24x7 Helpline for Mental Health Counselling</p>
+                <a href="tel:9999666555" className="text-teal font-bold block mt-2">9999 666 555</a>
+              </div>
+              
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium">iCall Helpline (Tata Institute)</h4>
+                <p className="text-sm text-muted-foreground">Psychosocial Counselling</p>
+                <a href="tel:02225521111" className="text-teal font-bold block mt-2">022-2552 1111</a>
+              </div>
+              
+              <div className="border rounded-lg p-4">
+                <h4 className="font-medium">Arpita Suicide Prevention Helpline</h4>
+                <p className="text-sm text-muted-foreground">Suicide Prevention & Crisis Support</p>
+                <a href="tel:08025251444" className="text-teal font-bold block mt-2">080-2525 1444</a>
+              </div>
+            </div>
+          </div>
+          
+          <Button className="btn-primary mt-6" asChild>
+            <a href="https://www.practo.com/counselling-psychology" target="_blank" rel="noopener noreferrer">
               Find Professional Support
             </a>
           </Button>

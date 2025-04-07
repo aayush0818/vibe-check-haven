@@ -10,6 +10,9 @@ import DailyCheck from "./pages/DailyCheck";
 import Journal from "./pages/Journal";
 import MoodTracker from "./pages/MoodTracker";
 import Resources from "./pages/Resources";
+import Community from "./pages/Community";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +28,9 @@ const App = () => (
           <Route path="/journal" element={<Journal />} />
           <Route path="/mood-tracker" element={<MoodTracker />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

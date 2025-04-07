@@ -5,11 +5,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { JournalEntry } from "@/pages/Journal";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type MoodOption = {
   emoji: string;
   label: string;
   value: string;
+};
+
+type JournalPrompt = {
+  text: string;
+  forMood?: string;
+  category: string;
 };
 
 const moodOptions: MoodOption[] = [
@@ -23,6 +30,21 @@ const moodOptions: MoodOption[] = [
   { emoji: "🤔", label: "Reflective", value: "🤔 Reflective" }
 ];
 
+const journalPrompts: JournalPrompt[] = [
+  { text: "What made you smile today, no matter how small?", forMood: "😊 Happy", category: "gratitude" },
+  { text: "Write about three things you're grateful for today and why.", category: "gratitude" },
+  { text: "What's one thing that challenged you today, and how did you handle it?", category: "challenges" },
+  { text: "If your emotions today were weather, how would you describe them?", category: "reflection" },
+  { text: "What's something you accomplished today that you're proud of?", category: "achievements" },
+  { text: "What's one thing you can do tomorrow to take care of yourself?", category: "self-care" },
+  { text: "Write about a recent interaction that made you feel good.", category: "connection" },
+  { text: "What boundaries do you need to set or maintain for your wellbeing?", category: "boundaries" },
+  { text: "What emotions are you carrying that need to be expressed?", forMood: "😔 Sad", category: "emotions" },
+  { text: "What's causing you stress right now, and what's one small step to manage it?", forMood: "😓 Stressed", category: "stress" },
+  { text: "What do you need to forgive yourself for?", category: "forgiveness" },
+  { text: "What are you looking forward to in the coming days?", category: "hope" }
+];
+
 interface JournalEntryFormProps {
   onSave: (entry: Omit<JournalEntry, "id" | "date">) => void;
   onCancel: () => void;
@@ -33,6 +55,37 @@ const JournalEntryForm = ({ onSave, onCancel }: JournalEntryFormProps) => {
   const [content, setContent] = useState("");
   const [mood, setMood] = useState<string>("");
   const [tagsInput, setTagsInput] = useState("");
+  const [promptCategory, setPromptCategory] = useState("all");
+  
+  const getFilteredPrompts = () => {
+    if (promptCategory === "all") {
+      return journalPrompts;
+    }
+    
+    if (promptCategory === "mood-based" && mood) {
+      return journalPrompts.filter(prompt => 
+        prompt.forMood === mood || !prompt.forMood);
+    }
+    
+    return journalPrompts.filter(prompt => 
+      prompt.category === promptCategory);
+  };
+  
+  const usePrompt = (promptText: string) => {
+    if (!title) {
+      // Generate a title from the prompt
+      const shortenedTitle = promptText.split(" ").slice(0, 5).join(" ") + "...";
+      setTitle(shortenedTitle);
+    }
+    
+    setContent(currentContent => {
+      const promptPrefix = `${promptText}\n\nMy thoughts:\n`;
+      if (currentContent) {
+        return `${promptPrefix}\n${currentContent}`;
+      }
+      return promptPrefix;
+    });
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +119,38 @@ const JournalEntryForm = ({ onSave, onCancel }: JournalEntryFormProps) => {
             required
             className="bg-white/80"
           />
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-medium">
+              Journal Prompts
+            </label>
+            <Tabs 
+              defaultValue="all" 
+              value={promptCategory} 
+              onValueChange={setPromptCategory} 
+              className="w-full max-w-xs"
+            >
+              <TabsList className="grid grid-cols-3">
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="mood-based">For My Mood</TabsTrigger>
+                <TabsTrigger value="gratitude">Gratitude</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+          
+          <div className="max-h-32 overflow-y-auto bg-white/80 rounded-md p-2 space-y-2">
+            {getFilteredPrompts().map((prompt, index) => (
+              <div 
+                key={index}
+                className="text-sm p-2 border border-teal/20 rounded hover:bg-teal/10 cursor-pointer"
+                onClick={() => usePrompt(prompt.text)}
+              >
+                {prompt.text}
+              </div>
+            ))}
+          </div>
         </div>
         
         <div>
