@@ -136,5 +136,96 @@ export const resourcesData: Resource[] = [
     source: "Self-Compassion.org",
     url: "https://self-compassion.org/category/exercises/",
     tags: ["self-compassion", "exercises", "self-care"]
+  },
+  // Academic and research-based resources from top universities and doctors
+  {
+    id: "16",
+    title: "Harvard Medical School: Understanding Depression",
+    description: "Research-based guide on depression causes, symptoms, and treatment approaches based on the latest scientific studies.",
+    type: "article",
+    source: "Harvard Medical School",
+    url: "https://www.health.harvard.edu/mind-and-mood/what-causes-depression",
+    tags: ["depression", "research", "academic", "science"]
+  },
+  {
+    id: "17",
+    title: "Oxford University: Mindfulness-Based Cognitive Therapy Research",
+    description: "Evidence from Oxford University's groundbreaking studies on how mindfulness meditation can prevent depression relapse.",
+    type: "pdf",
+    source: "Oxford Mindfulness Centre",
+    url: "https://www.oxfordmindfulness.org/learn/resources/",
+    tags: ["mindfulness", "depression", "research", "academic"]
+  },
+  {
+    id: "18",
+    title: "Stanford Center for Compassion: Self-Compassion Research",
+    description: "Stanford's research findings on how self-compassion practices measurably improve mental health outcomes and resilience.",
+    type: "article",
+    source: "Stanford University",
+    url: "http://ccare.stanford.edu/",
+    tags: ["self-compassion", "research", "academic", "science"]
+  },
+  {
+    id: "19",
+    title: "Johns Hopkins: Anxiety Disorders - Evidence-Based Treatments",
+    description: "Comprehensive review of proven treatments for anxiety disorders based on clinical research from Johns Hopkins Medicine.",
+    type: "pdf",
+    source: "Johns Hopkins Medicine",
+    url: "https://www.hopkinsmedicine.org/health/treatment-tests-and-therapies/mental-health-disorder-treatment",
+    tags: ["anxiety", "research", "academic", "treatment"]
+  },
+  {
+    id: "20",
+    title: "UCLA Mindful Awareness Research Center: Scientific Benefits of Meditation",
+    description: "Research findings on how meditation changes brain structure and function, with evidence from neuroimaging studies.",
+    type: "video",
+    source: "UCLA Health",
+    url: "https://www.uclahealth.org/programs/marc",
+    tags: ["meditation", "research", "neuroscience", "academic"]
+  },
+  {
+    id: "21",
+    title: "Cambridge University: Sleep and Mental Health Research",
+    description: "Latest findings from Cambridge researchers on the bidirectional relationship between sleep quality and psychiatric conditions.",
+    type: "article",
+    source: "Cambridge University",
+    url: "https://www.neuroscience.cam.ac.uk/research/cameos/sleepandmentaldisorders.php",
+    tags: ["sleep", "research", "academic", "science"]
+  },
+  {
+    id: "22",
+    title: "NIMH: The Brain and Emotional Health",
+    description: "National Institute of Mental Health's research on how emotions are processed in the brain and affect mental health.",
+    type: "pdf",
+    source: "National Institute of Mental Health",
+    url: "https://www.nimh.nih.gov/health/topics/index",
+    tags: ["neuroscience", "emotions", "research", "academic"]
+  },
+  {
+    id: "23",
+    title: "Yale University: Emotional Intelligence in Mental Wellbeing",
+    description: "Yale Center for Emotional Intelligence research on how emotional skills influence mental health outcomes.",
+    type: "video",
+    source: "Yale University",
+    url: "https://www.ycei.org/",
+    tags: ["emotional intelligence", "research", "academic", "wellbeing"]
+  },
+  {
+    id: "24",
+    title: "MIT Media Lab: Technology and Mental Health Innovations",
+    description: "Cutting-edge research from MIT on how technology can be harnessed to improve mental health monitoring and treatment.",
+    type: "article",
+    source: "MIT Media Lab",
+    url: "https://www.media.mit.edu/groups/affective-computing/overview/",
+    tags: ["technology", "innovation", "research", "academic"]
+  },
+  {
+    id: "25",
+    title: "Columbia University: Resilience Research and Training",
+    description: "Evidence-based resilience building techniques from Columbia University's Resilience Center for Veterans & Families.",
+    type: "pdf",
+    source: "Columbia University",
+    url: "https://www.tc.columbia.edu/resilience-center/",
+    tags: ["resilience", "research", "academic", "trauma"]
   }
 ];

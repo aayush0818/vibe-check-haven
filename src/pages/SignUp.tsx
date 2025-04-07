@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,19 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // Check if user is already signed up
+  useEffect(() => {
+    const userData = localStorage.getItem("moodly_user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      if (user.isLoggedIn) {
+        setIsAuthenticated(true);
+        navigate("/");
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,17 +55,27 @@ const SignUp = () => {
     // Simulating registration for now
     setTimeout(() => {
       // Storing a simple indicator that user is registered and logged in
-      localStorage.setItem("moodly_user", JSON.stringify({
+      const userData = {
         name,
         email,
         isLoggedIn: true
-      }));
+      };
+      
+      localStorage.setItem("moodly_user", JSON.stringify(userData));
+      
+      // Update UI state
+      setIsAuthenticated(true);
       
       toast.success("Account created successfully!");
       setIsLoading(false);
       navigate("/");
     }, 1500);
   };
+
+  // If already authenticated, don't show the sign-up form
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <MainLayout>

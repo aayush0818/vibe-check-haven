@@ -1,11 +1,61 @@
 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { useState } from "react";
+import { Menu, LogOut, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  
+  // Check login status
+  useEffect(() => {
+    const checkAuthStatus = () => {
+      const userData = localStorage.getItem("moodly_user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        if (user.isLoggedIn) {
+          setIsLoggedIn(true);
+          setUserName(user.name || "User");
+        } else {
+          setIsLoggedIn(false);
+          setUserName("");
+        }
+      } else {
+        setIsLoggedIn(false);
+        setUserName("");
+      }
+    };
+    
+    checkAuthStatus();
+    
+    // Set up event listener for storage changes
+    window.addEventListener("storage", checkAuthStatus);
+    
+    // Custom event listener for auth changes
+    const handleAuthChange = () => {
+      checkAuthStatus();
+    };
+    
+    window.addEventListener("authChange", handleAuthChange);
+    
+    return () => {
+      window.removeEventListener("storage", checkAuthStatus);
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem("moodly_user");
+    setIsLoggedIn(false);
+    setUserName("");
+    toast.success("Successfully logged out");
+    
+    // Dispatch event to notify components about auth change
+    window.dispatchEvent(new Event("authChange"));
+  };
   
   return (
     <nav className="w-full py-4 border-b border-border/40 bg-background/95 backdrop-blur-sm fixed top-0 z-50">
@@ -38,12 +88,31 @@ const Navbar = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          <Button asChild variant="outline" className="btn-outline">
-            <Link to="/sign-in">Sign In</Link>
-          </Button>
-          <Button className="bg-lavender hover:bg-lavender/90 text-white">
-            <Link to="/sign-up">Sign Up</Link>
-          </Button>
+          {isLoggedIn ? (
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex items-center gap-2">
+                <User className="h-4 w-4 text-lavender" />
+                <span className="text-sm">{userName}</span>
+              </div>
+              <Button 
+                variant="outline" 
+                className="border-lavender text-lavender hover:bg-lavender/10"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Button asChild variant="outline" className="border-lavender text-lavender hover:bg-lavender/10">
+                <Link to="/sign-in">Sign In</Link>
+              </Button>
+              <Button className="bg-lavender hover:bg-lavender/90 text-white">
+                <Link to="/sign-up">Sign Up</Link>
+              </Button>
+            </>
+          )}
           
           <Button 
             variant="ghost" 
@@ -77,6 +146,24 @@ const Navbar = () => {
             <Button variant="ghost" asChild className="justify-start hover:bg-lavender/10 hover:text-lavender">
               <Link to="/community">Community</Link>
             </Button>
+            
+            {isLoggedIn && (
+              <div className="flex items-center justify-between pt-2 border-t border-border/40 mt-2">
+                <div className="flex items-center">
+                  <User className="h-4 w-4 text-lavender mr-2" />
+                  <span className="text-sm">{userName}</span>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-red-500 hover:bg-red-500/10"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  Logout
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}

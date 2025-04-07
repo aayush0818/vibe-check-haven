@@ -10,6 +10,7 @@ export const categories = [
   { id: "sleep", label: "Sleep Help" },
   { id: "relationships", label: "Relationships" },
   { id: "selfcare", label: "Self-Care" },
+  { id: "academic", label: "Academic Research" },
   { id: "india", label: "Indian Resources" }
 ];
 
@@ -81,6 +82,16 @@ export const CategoryTabs = ({ resourcesData }: CategoryTabsProps) => {
           resources={resourcesData.filter((resource) => 
             resource.tags.some(tag => 
               ["self-care", "self-help", "habits", "health", "self-compassion"].includes(tag)
+            )
+          )} 
+        />
+      </TabsContent>
+      
+      <TabsContent value="academic" className="mt-0">
+        <ResourceList 
+          resources={resourcesData.filter((resource) => 
+            resource.tags.some(tag => 
+              ["research", "academic", "science"].includes(tag)
             )
           )} 
         />
