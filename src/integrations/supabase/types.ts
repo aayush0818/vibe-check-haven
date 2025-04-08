@@ -9,7 +9,69 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      moodly: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: never
+          user_id?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: never
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      vibes: {
+        Row: {
+          created_at: string | null
+          id: number
+          message: string | null
+          user_id: string | null
+          vibe_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          message?: string | null
+          user_id?: string | null
+          vibe_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          message?: string | null
+          user_id?: string | null
+          vibe_type?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

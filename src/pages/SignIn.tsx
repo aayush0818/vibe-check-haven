@@ -6,62 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { signIn, user, loading } = useAuth();
 
-  // Check if user is already logged in
+  // Redirect if already logged in
   useEffect(() => {
-    const userData = localStorage.getItem("moodly_user");
-    if (userData) {
-      const user = JSON.parse(userData);
-      if (user.isLoggedIn) {
-        setIsAuthenticated(true);
-        navigate("/");
-      }
-    }
-  }, [navigate]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    // Simulating authentication for now
-    setTimeout(() => {
-      // Storing a simple indicator that user is logged in
-      const userData = {
-        email,
-        name: email.split('@')[0],
-        isLoggedIn: true
-      };
-      
-      localStorage.setItem("moodly_user", JSON.stringify(userData));
-      
-      // Update UI state
-      setIsAuthenticated(true);
-      
-      toast.success("Successfully signed in!");
-      setIsLoading(false);
+    if (user) {
       navigate("/");
-    }, 1500);
-  };
+    }
+  }, [user, navigate]);
 
-  // If already authenticated, don't show the sign-in form
-  if (isAuthenticated) {
-    return null;
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await signIn(email, password);
+  };
 
   return (
     <MainLayout>
@@ -107,9 +71,9 @@ const SignIn = () => {
             <Button 
               type="submit" 
               className="w-full bg-lavender hover:bg-lavender/90 text-white" 
-              disabled={isLoading}
+              disabled={loading}
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Signing in...

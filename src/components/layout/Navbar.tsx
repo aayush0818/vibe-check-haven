@@ -3,59 +3,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, LogOut, User } from "lucide-react";
 import { useState, useEffect } from "react";
-import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState("");
-  
-  // Check login status
-  useEffect(() => {
-    const checkAuthStatus = () => {
-      const userData = localStorage.getItem("moodly_user");
-      if (userData) {
-        const user = JSON.parse(userData);
-        if (user.isLoggedIn) {
-          setIsLoggedIn(true);
-          setUserName(user.name || "User");
-        } else {
-          setIsLoggedIn(false);
-          setUserName("");
-        }
-      } else {
-        setIsLoggedIn(false);
-        setUserName("");
-      }
-    };
-    
-    checkAuthStatus();
-    
-    // Set up event listener for storage changes
-    window.addEventListener("storage", checkAuthStatus);
-    
-    // Custom event listener for auth changes
-    const handleAuthChange = () => {
-      checkAuthStatus();
-    };
-    
-    window.addEventListener("authChange", handleAuthChange);
-    
-    return () => {
-      window.removeEventListener("storage", checkAuthStatus);
-      window.removeEventListener("authChange", handleAuthChange);
-    };
-  }, []);
-  
-  const handleLogout = () => {
-    localStorage.removeItem("moodly_user");
-    setIsLoggedIn(false);
-    setUserName("");
-    toast.success("Successfully logged out");
-    
-    // Dispatch event to notify components about auth change
-    window.dispatchEvent(new Event("authChange"));
-  };
+  const { user, signOut, loading } = useAuth();
+  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || "User";
   
   return (
     <nav className="w-full py-4 border-b border-border/40 bg-background/95 backdrop-blur-sm fixed top-0 z-50">
@@ -88,7 +41,7 @@ const Navbar = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          {isLoggedIn ? (
+          {user ? (
             <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-2">
                 <User className="h-4 w-4 text-lavender" />
@@ -97,7 +50,8 @@ const Navbar = () => {
               <Button 
                 variant="outline" 
                 className="border-lavender text-lavender hover:bg-lavender/10"
-                onClick={handleLogout}
+                onClick={() => signOut()}
+                disabled={loading}
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -147,7 +101,7 @@ const Navbar = () => {
               <Link to="/community">Community</Link>
             </Button>
             
-            {isLoggedIn && (
+            {user && (
               <div className="flex items-center justify-between pt-2 border-t border-border/40 mt-2">
                 <div className="flex items-center">
                   <User className="h-4 w-4 text-lavender mr-2" />
@@ -157,7 +111,8 @@ const Navbar = () => {
                   variant="ghost" 
                   size="sm"
                   className="text-red-500 hover:bg-red-500/10"
-                  onClick={handleLogout}
+                  onClick={() => signOut()}
+                  disabled={loading}
                 >
                   <LogOut className="h-4 w-4 mr-1" />
                   Logout

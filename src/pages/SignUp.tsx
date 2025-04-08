@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -17,65 +17,32 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { signUp, user, loading } = useAuth();
   
-  // Check if user is already signed up
+  // Redirect if already logged in
   useEffect(() => {
-    const userData = localStorage.getItem("moodly_user");
-    if (userData) {
-      const user = JSON.parse(userData);
-      if (user.isLoggedIn) {
-        setIsAuthenticated(true);
-        navigate("/");
-      }
+    if (user) {
+      navigate("/");
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name || !email || !password || !confirmPassword) {
-      toast.error("Please fill in all fields");
       return;
     }
     
     if (password !== confirmPassword) {
-      toast.error("Passwords don't match");
       return;
     }
     
     if (!acceptTerms) {
-      toast.error("Please accept the Terms of Service");
       return;
     }
     
-    setIsLoading(true);
-    
-    // Simulating registration for now
-    setTimeout(() => {
-      // Storing a simple indicator that user is registered and logged in
-      const userData = {
-        name,
-        email,
-        isLoggedIn: true
-      };
-      
-      localStorage.setItem("moodly_user", JSON.stringify(userData));
-      
-      // Update UI state
-      setIsAuthenticated(true);
-      
-      toast.success("Account created successfully!");
-      setIsLoading(false);
-      navigate("/");
-    }, 1500);
+    await signUp(email, password, name);
   };
-
-  // If already authenticated, don't show the sign-up form
-  if (isAuthenticated) {
-    return null;
-  }
 
   return (
     <MainLayout>
@@ -160,9 +127,9 @@ const SignUp = () => {
             <Button 
               type="submit" 
               className="w-full bg-lavender hover:bg-lavender/90 text-white" 
-              disabled={isLoading || !acceptTerms}
+              disabled={loading || !acceptTerms}
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Creating Account...
