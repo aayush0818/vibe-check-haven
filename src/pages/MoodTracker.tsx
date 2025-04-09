@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { Card } from "@/components/ui/card";
@@ -18,12 +17,11 @@ import {
   Cell
 } from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase, moodEntriesTable, MoodEntry } from "@/integrations/supabase/client";
+import { moodEntriesTable } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
-// Mock data - used for non-authenticated users
 const mockMoodData = [
   { date: "Apr 1", mood: 2, energy: 3, sleep: 2 },
   { date: "Apr 2", mood: 1, energy: 1, sleep: 1 },
@@ -51,7 +49,6 @@ const journalTags = [
   { name: "relationships", count: 2 }
 ];
 
-// Type for chart data
 type ChartData = {
   date: string;
   mood: number;
@@ -75,12 +72,10 @@ const MoodTracker = () => {
     notes: "Feeling good today!"
   });
 
-  // Fetch user mood entries from Supabase when user logs in
   useEffect(() => {
     if (user) {
       fetchUserMoodEntries();
     } else {
-      // Use mock data for non-authenticated users
       setMoodData(mockMoodData);
     }
   }, [user]);
@@ -88,11 +83,15 @@ const MoodTracker = () => {
   const fetchUserMoodEntries = async () => {
     try {
       setIsLoading(true);
-      
-      // Use the specific table access function
+
+      if (!user) {
+        setMoodData(mockMoodData);
+        return;
+      }
+
       const { data, error } = await moodEntriesTable()
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .order('date', { ascending: true });
 
       if (error) {
@@ -102,7 +101,6 @@ const MoodTracker = () => {
       }
 
       if (data && data.length > 0) {
-        // Transform data for the chart
         const chartData = data.map((entry: any) => ({
           date: format(new Date(entry.date), 'MMM d'),
           mood: entry.mood,
@@ -112,7 +110,6 @@ const MoodTracker = () => {
         setMoodData(chartData);
         console.log('User mood data loaded:', chartData);
       } else if (user) {
-        // If user is authenticated but has no data yet
         setMoodData([]);
         toast.info('No mood entries yet. Start tracking your mood daily!');
       }
@@ -124,7 +121,6 @@ const MoodTracker = () => {
     }
   };
 
-  // Save a mood entry
   const saveMoodEntry = async () => {
     if (!user) {
       toast.error('Please sign in to save your mood data');
@@ -149,7 +145,6 @@ const MoodTracker = () => {
       }
 
       toast.success('Mood entry saved successfully!');
-      // Refresh the data to show the new entry
       fetchUserMoodEntries();
     } catch (error) {
       console.error('Error in saveMoodEntry:', error);
@@ -157,7 +152,6 @@ const MoodTracker = () => {
     }
   };
 
-  // Helper function to update sample entry state
   const updateSampleEntry = (key: string, value: number | string) => {
     setSampleEntry(prev => ({
       ...prev,
@@ -174,7 +168,7 @@ const MoodTracker = () => {
       default: return "";
     }
   };
-  
+
   const getTooltipContent = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (

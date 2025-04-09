@@ -24,5 +24,5 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
 
 // Use direct table access
 export const moodEntriesTable = () => {
-  return supabase.from('mood_entries') as unknown as ReturnType<typeof supabase.from<MoodEntry>>;
+  return supabase.from('mood_entries');
 };
