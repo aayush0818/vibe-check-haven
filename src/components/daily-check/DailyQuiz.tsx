@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -132,6 +131,8 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
 
   const saveMoodEntry = async (answers: QuizAnswer[]) => {
     try {
+      if (!user) return; // Safety check
+
       // Extract mood, energy, and sleep from the first three questions
       const moodValue = answers.find(a => a.questionId === 1)?.value || 3;
       const energyValue = answers.find(a => a.questionId === 3)?.value || 3;
@@ -144,14 +145,14 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
       
       const { error } = await supabase
         .from('mood_entries')
-        .insert([
-          {
-            mood: moodValue,
-            energy: energyValue,
-            sleep: sleepValue,
-            notes: notes.substring(0, 500) // Limit notes length
-          }
-        ]);
+        .insert({
+          user_id: user.id,
+          mood: moodValue,
+          energy: energyValue,
+          sleep: sleepValue,
+          notes: notes.substring(0, 500), // Limit notes length
+          date: new Date().toISOString()
+        });
 
       if (error) {
         console.error('Error saving daily check:', error);

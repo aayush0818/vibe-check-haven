@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { Card } from "@/components/ui/card";
@@ -18,7 +17,7 @@ import {
   Cell
 } from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, MoodEntry } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -99,9 +98,12 @@ const MoodTracker = () => {
   const fetchUserMoodEntries = async () => {
     try {
       setIsLoading(true);
+      
+      // Use typed fetch to handle the mood_entries table
       const { data, error } = await supabase
         .from('mood_entries')
         .select('*')
+        .eq('user_id', user?.id)
         .order('date', { ascending: true });
 
       if (error) {
@@ -112,7 +114,7 @@ const MoodTracker = () => {
 
       if (data && data.length > 0) {
         // Transform data for the chart
-        const chartData = data.map((entry: MoodEntry) => ({
+        const chartData = data.map((entry: any) => ({
           date: format(new Date(entry.date), 'MMM d'),
           mood: entry.mood,
           energy: entry.energy,
@@ -140,14 +142,17 @@ const MoodTracker = () => {
     }
 
     try {
+      // Use typed insert to handle the mood_entries table
       const { data, error } = await supabase
         .from('mood_entries')
         .insert([
           {
+            user_id: user.id,
             mood: sampleEntry.mood,
             energy: sampleEntry.energy,
             sleep: sampleEntry.sleep,
             notes: sampleEntry.notes,
+            date: new Date().toISOString()
           }
         ]);
 
