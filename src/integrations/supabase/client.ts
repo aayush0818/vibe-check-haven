@@ -22,7 +22,7 @@ export type MoodEntry = {
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-// Temporary workaround for accessing new tables not yet in the generated types
-export const getMoodEntriesTable = () => {
-  return supabase.from('mood_entries');
+// Use direct table access
+export const moodEntriesTable = () => {
+  return supabase.from('mood_entries') as unknown as ReturnType<typeof supabase.from<MoodEntry>>;
 };

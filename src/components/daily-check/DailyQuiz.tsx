@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { QuizAnswer } from "@/pages/DailyCheck";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase, getMoodEntriesTable } from "@/integrations/supabase/client";
+import { supabase, moodEntriesTable } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 type Question = {
@@ -144,7 +144,7 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
         .map(a => `Q${a.questionId}: ${a.answer}`)
         .join(' | ');
       
-      const { error } = await getMoodEntriesTable()
+      const { error } = await moodEntriesTable()
         .insert({
           user_id: user.id,
           mood: moodValue,

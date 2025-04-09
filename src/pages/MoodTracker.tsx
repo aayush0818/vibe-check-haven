@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { Card } from "@/components/ui/card";
@@ -17,7 +18,7 @@ import {
   Cell
 } from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase, getMoodEntriesTable } from "@/integrations/supabase/client";
+import { supabase, moodEntriesTable, MoodEntry } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -60,7 +61,7 @@ type ChartData = {
 
 const MoodTracker = () => {
   const { user } = useAuth();
-  const [moodData, setMoodData] = useState<ChartData[]>(mockMoodData);
+  const [moodData, setMoodData] = useState<ChartData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [sampleEntry, setSampleEntry] = useState<{
     mood: number;
@@ -74,7 +75,7 @@ const MoodTracker = () => {
     notes: "Feeling good today!"
   });
 
-  // Fetch user mood entries from Supabase
+  // Fetch user mood entries from Supabase when user logs in
   useEffect(() => {
     if (user) {
       fetchUserMoodEntries();
@@ -88,8 +89,8 @@ const MoodTracker = () => {
     try {
       setIsLoading(true);
       
-      // Use helper function to access mood_entries table
-      const { data, error } = await getMoodEntriesTable()
+      // Use the specific table access function
+      const { data, error } = await moodEntriesTable()
         .select('*')
         .eq('user_id', user?.id)
         .order('date', { ascending: true });
@@ -109,6 +110,7 @@ const MoodTracker = () => {
           sleep: entry.sleep
         }));
         setMoodData(chartData);
+        console.log('User mood data loaded:', chartData);
       } else if (user) {
         // If user is authenticated but has no data yet
         setMoodData([]);
@@ -130,8 +132,7 @@ const MoodTracker = () => {
     }
 
     try {
-      // Use helper function to access mood_entries table
-      const { data, error } = await getMoodEntriesTable()
+      const { error } = await moodEntriesTable()
         .insert({
           user_id: user.id,
           mood: sampleEntry.mood,
@@ -148,7 +149,8 @@ const MoodTracker = () => {
       }
 
       toast.success('Mood entry saved successfully!');
-      fetchUserMoodEntries(); // Refresh the data
+      // Refresh the data to show the new entry
+      fetchUserMoodEntries();
     } catch (error) {
       console.error('Error in saveMoodEntry:', error);
       toast.error('Something went wrong');
