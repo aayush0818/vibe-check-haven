@@ -3,6 +3,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { QuizAnswer } from "@/pages/DailyCheck";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type Question = {
   id: number;
@@ -104,8 +107,9 @@ interface DailyQuizProps {
 const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [userAnswers, setUserAnswers] = useState<QuizAnswer[]>([]);
+  const { user } = useAuth();
   
-  const handleAnswer = (option: { text: string; emoji: string; value: number }) => {
+  const handleAnswer = async (option: { text: string; emoji: string; value: number }) => {
     const newAnswers = [...userAnswers];
     newAnswers[currentQuestion] = {
       questionId: questions[currentQuestion].id,
@@ -118,7 +122,45 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
+      // If this is the last question and user is logged in, save mood entry
+      if (user && currentQuestion === questions.length - 1) {
+        await saveMoodEntry(newAnswers);
+      }
       onComplete(newAnswers);
+    }
+  };
+
+  const saveMoodEntry = async (answers: QuizAnswer[]) => {
+    try {
+      // Extract mood, energy, and sleep from the first three questions
+      const moodValue = answers.find(a => a.questionId === 1)?.value || 3;
+      const energyValue = answers.find(a => a.questionId === 3)?.value || 3;
+      const sleepValue = answers.find(a => a.questionId === 4)?.value || 3;
+      
+      // Create notes from all the answers
+      const notes = answers
+        .map(a => `Q${a.questionId}: ${a.answer}`)
+        .join(' | ');
+      
+      const { error } = await supabase
+        .from('mood_entries')
+        .insert([
+          {
+            mood: moodValue,
+            energy: energyValue,
+            sleep: sleepValue,
+            notes: notes.substring(0, 500) // Limit notes length
+          }
+        ]);
+
+      if (error) {
+        console.error('Error saving daily check:', error);
+        toast.error('Could not save your mood data');
+      } else {
+        toast.success('Your mood data has been saved!');
+      }
+    } catch (error) {
+      console.error('Error in saveMoodEntry:', error);
     }
   };
 

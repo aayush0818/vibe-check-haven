@@ -1,8 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { QuizAnswer } from "@/pages/DailyCheck";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface QuizResultsProps {
   answers: QuizAnswer[];
@@ -63,6 +63,8 @@ const getJournalPrompt = (score: number): string => {
 };
 
 const QuizResults = ({ answers, onStartOver }: QuizResultsProps) => {
+  const { user } = useAuth();
+  
   // Calculate total score (excluding the last question which doesn't have a numeric value)
   const scoreQuestions = answers.slice(0, 7);
   const totalScore = scoreQuestions.reduce((sum, answer) => sum + answer.value, 0);
@@ -80,6 +82,15 @@ const QuizResults = ({ answers, onStartOver }: QuizResultsProps) => {
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Based on your answers, here's a reflection of how you're feeling today.
         </p>
+        {user ? (
+          <p className="text-sm text-teal mt-2 font-medium">
+            ✓ Your mood data has been saved to your profile
+          </p>
+        ) : (
+          <p className="text-sm text-lavender mt-2">
+            <Link to="/sign-in" className="underline">Sign in</Link> to save your mood data and track your progress over time.
+          </p>
+        )}
       </div>
       
       <Card className="gradient-card border-none shadow-xl p-8 md:p-12 max-w-3xl mx-auto">
