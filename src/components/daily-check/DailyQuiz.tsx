@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { QuizAnswer } from "@/pages/DailyCheck";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, getMoodEntriesTable } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 type Question = {
@@ -143,8 +144,7 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
         .map(a => `Q${a.questionId}: ${a.answer}`)
         .join(' | ');
       
-      const { error } = await supabase
-        .from('mood_entries')
+      const { error } = await getMoodEntriesTable()
         .insert({
           user_id: user.id,
           mood: moodValue,

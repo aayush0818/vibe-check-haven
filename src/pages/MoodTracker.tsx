@@ -17,7 +17,7 @@ import {
   Cell
 } from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase, MoodEntry } from "@/integrations/supabase/client";
+import { supabase, getMoodEntriesTable } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -49,17 +49,6 @@ const journalTags = [
   { name: "nature", count: 3 },
   { name: "relationships", count: 2 }
 ];
-
-// Type for mood entry from database
-type MoodEntry = {
-  id: string;
-  user_id: string;
-  mood: number;
-  energy: number;
-  sleep: number;
-  date: string;
-  notes?: string;
-};
 
 // Type for chart data
 type ChartData = {
@@ -99,9 +88,8 @@ const MoodTracker = () => {
     try {
       setIsLoading(true);
       
-      // Use typed fetch to handle the mood_entries table
-      const { data, error } = await supabase
-        .from('mood_entries')
+      // Use helper function to access mood_entries table
+      const { data, error } = await getMoodEntriesTable()
         .select('*')
         .eq('user_id', user?.id)
         .order('date', { ascending: true });
@@ -142,19 +130,16 @@ const MoodTracker = () => {
     }
 
     try {
-      // Use typed insert to handle the mood_entries table
-      const { data, error } = await supabase
-        .from('mood_entries')
-        .insert([
-          {
-            user_id: user.id,
-            mood: sampleEntry.mood,
-            energy: sampleEntry.energy,
-            sleep: sampleEntry.sleep,
-            notes: sampleEntry.notes,
-            date: new Date().toISOString()
-          }
-        ]);
+      // Use helper function to access mood_entries table
+      const { data, error } = await getMoodEntriesTable()
+        .insert({
+          user_id: user.id,
+          mood: sampleEntry.mood,
+          energy: sampleEntry.energy,
+          sleep: sampleEntry.sleep,
+          notes: sampleEntry.notes,
+          date: new Date().toISOString()
+        });
 
       if (error) {
         console.error('Error saving mood entry:', error);
