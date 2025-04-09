@@ -1,8 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import DailyQuiz from "@/components/daily-check/DailyQuiz";
 import QuizResults from "@/components/daily-check/QuizResults";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 export type QuizAnswer = {
   questionId: number;
@@ -13,6 +16,8 @@ export type QuizAnswer = {
 const DailyCheck = () => {
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [isComplete, setIsComplete] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleQuizComplete = (results: QuizAnswer[]) => {
     setAnswers(results);
@@ -24,6 +29,10 @@ const DailyCheck = () => {
   const handleStartOver = () => {
     setAnswers([]);
     setIsComplete(false);
+  };
+
+  const handleGoToMoodTracker = () => {
+    navigate('/mood-tracker');
   };
 
   return (
@@ -38,7 +47,17 @@ const DailyCheck = () => {
             <DailyQuiz onComplete={handleQuizComplete} />
           </>
         ) : (
-          <QuizResults answers={answers} onStartOver={handleStartOver} />
+          <>
+            <QuizResults answers={answers} onStartOver={handleStartOver} />
+            <div className="mt-8 text-center">
+              <Button onClick={handleGoToMoodTracker} className="bg-teal hover:bg-teal/80">
+                View Your Mood Tracker
+              </Button>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Your daily check-in has been saved to your mood tracker. View your progress over time.
+              </p>
+            </div>
+          </>
         )}
       </div>
     </MainLayout>
