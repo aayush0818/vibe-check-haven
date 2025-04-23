@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,6 +5,7 @@ import { QuizAnswer } from "@/pages/DailyCheck";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase, moodEntriesTable } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 type Question = {
   id: number;
@@ -151,7 +151,7 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
           energy: energyValue,
           sleep: sleepValue,
           notes: notes.substring(0, 500), // Limit notes length
-          date: new Date().toISOString()
+          date: format(new Date(), 'yyyy-MM-dd') // Use formatted date for consistency
         });
 
       if (error) {
@@ -162,6 +162,7 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
       }
     } catch (error) {
       console.error('Error in saveMoodEntry:', error);
+      toast.error('Something went wrong while saving your mood entry');
     }
   };
 
