@@ -5,6 +5,7 @@ import { supabase, moodEntriesTable } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { QuizAnswer } from "./types";
+import { questions } from "./quizQuestions";
 
 export const useQuizState = (onComplete: (results: QuizAnswer[]) => void) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
