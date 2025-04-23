@@ -6,6 +6,8 @@ import DailyQuiz from "@/components/daily-check/DailyQuiz";
 import QuizResults from "@/components/daily-check/QuizResults";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase, moodEntriesTable } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
 export type QuizAnswer = {
   questionId: number;
@@ -16,14 +18,35 @@ export type QuizAnswer = {
 const DailyCheck = () => {
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [isComplete, setIsComplete] = useState(false);
+  const [hasEntryToday, setHasEntryToday] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    checkTodayEntry();
+  }, [user]);
+
+  const checkTodayEntry = async () => {
+    if (!user) return;
+
+    try {
+      const todayDate = format(new Date(), 'yyyy-MM-dd');
+      const { data } = await moodEntriesTable()
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('date', todayDate)
+        .maybeSingle();
+
+      setHasEntryToday(!!data);
+    } catch (error) {
+      console.error('Error checking today entry:', error);
+    }
+  };
 
   const handleQuizComplete = (results: QuizAnswer[]) => {
     setAnswers(results);
     setIsComplete(true);
-    // In a real app, you would save these results to the user's profile
-    console.log("Quiz completed with results:", results);
+    setHasEntryToday(true);
   };
 
   const handleStartOver = () => {
@@ -41,8 +64,13 @@ const DailyCheck = () => {
         {!isComplete ? (
           <>
             <h1 className="text-3xl md:text-4xl font-bold text-center mb-4">Daily Vibes Quiz</h1>
+            {hasEntryToday && (
+              <div className="bg-lavender/20 rounded-lg p-4 mb-8 text-center">
+                <p className="text-sm">You've already completed today's check-in. Taking it again will update your previous entry.</p>
+              </div>
+            )}
             <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-              Take a moment to check in with yourself. This quick quiz helps you reflect on how you're feeling today. No pressure—just honest reflection.
+              Take a moment to check in with yourself. This quick quiz helps you reflect on how you're feeling today.
             </p>
             <DailyQuiz onComplete={handleQuizComplete} />
           </>

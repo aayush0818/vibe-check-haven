@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -122,7 +123,6 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // If this is the last question and user is logged in, save mood entry
       if (user && currentQuestion === questions.length - 1) {
         await saveMoodEntry(newAnswers);
       }
@@ -132,32 +132,62 @@ const DailyQuiz = ({ onComplete }: DailyQuizProps) => {
 
   const saveMoodEntry = async (answers: QuizAnswer[]) => {
     try {
-      if (!user) return; // Safety check
+      if (!user) {
+        toast.error('Please sign in to save your mood data');
+        return;
+      }
 
-      // Extract mood, energy, and sleep from the first three questions
       const moodValue = answers.find(a => a.questionId === 1)?.value || 3;
       const energyValue = answers.find(a => a.questionId === 3)?.value || 3;
       const sleepValue = answers.find(a => a.questionId === 4)?.value || 3;
       
-      // Create notes from all the answers
       const notes = answers
         .map(a => `Q${a.questionId}: ${a.answer}`)
         .join(' | ');
-      
-      const { error } = await moodEntriesTable()
-        .insert({
-          user_id: user.id,
-          mood: moodValue,
-          energy: energyValue,
-          sleep: sleepValue,
-          notes: notes.substring(0, 500), // Limit notes length
-          date: format(new Date(), 'yyyy-MM-dd') // Use formatted date for consistency
-        });
 
-      if (error) {
-        console.error('Error saving daily check:', error);
-        toast.error('Could not save your mood data');
+      const todayDate = format(new Date(), 'yyyy-MM-dd');
+      
+      // First check if an entry already exists for today
+      const { data: existingEntry } = await moodEntriesTable()
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('date', todayDate)
+        .maybeSingle();
+
+      if (existingEntry) {
+        // Update existing entry
+        const { error: updateError } = await moodEntriesTable()
+          .update({
+            mood: moodValue,
+            energy: energyValue,
+            sleep: sleepValue,
+            notes: notes.substring(0, 500)
+          })
+          .eq('id', existingEntry.id);
+
+        if (updateError) {
+          console.error('Error updating mood entry:', updateError);
+          toast.error('Could not update your mood data');
+          return;
+        }
+        toast.success('Your mood data has been updated!');
       } else {
+        // Create new entry
+        const { error: insertError } = await moodEntriesTable()
+          .insert({
+            user_id: user.id,
+            mood: moodValue,
+            energy: energyValue,
+            sleep: sleepValue,
+            notes: notes.substring(0, 500),
+            date: todayDate
+          });
+
+        if (insertError) {
+          console.error('Error saving mood entry:', insertError);
+          toast.error('Could not save your mood data');
+          return;
+        }
         toast.success('Your mood data has been saved!');
       }
     } catch (error) {
