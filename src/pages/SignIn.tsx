@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -24,6 +25,12 @@ const SignIn = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
     await signIn(email, password);
   };
 
@@ -32,8 +39,8 @@ const SignIn = () => {
       <div className="container mx-auto max-w-md py-12">
         <Card className="p-6 shadow-lg border-lavender/20">
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold">Welcome Back to Moodly</h1>
-            <p className="text-muted-foreground mt-2">Sign in to continue your journey</p>
+            <h1 className="text-2xl font-bold">Sign In to Your Account</h1>
+            <p className="text-muted-foreground mt-2">Welcome back</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-4">

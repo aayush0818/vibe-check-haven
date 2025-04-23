@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -16,9 +16,8 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [acceptTerms, setAcceptTerms] = useState(false);
   const { signUp, user, loading } = useAuth();
-  
+
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
@@ -30,14 +29,17 @@ const SignUp = () => {
     e.preventDefault();
     
     if (!name || !email || !password || !confirmPassword) {
+      toast.error("Please fill in all fields");
       return;
     }
     
     if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
     
-    if (!acceptTerms) {
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
       return;
     }
     
@@ -46,11 +48,11 @@ const SignUp = () => {
 
   return (
     <MainLayout>
-      <div className="container mx-auto max-w-md py-8">
+      <div className="container mx-auto max-w-md py-12">
         <Card className="p-6 shadow-lg border-lavender/20">
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold">Join Moodly</h1>
-            <p className="text-muted-foreground mt-2">Create your account to get started</p>
+            <h1 className="text-2xl font-bold">Create Your Account</h1>
+            <p className="text-muted-foreground mt-2">Start your journey with us</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -58,14 +60,14 @@ const SignUp = () => {
               <Label htmlFor="name">Full Name</Label>
               <Input 
                 id="name" 
-                placeholder="Your Name" 
+                placeholder="John Doe" 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
                 className="border-lavender/20 focus-visible:ring-lavender"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input 
@@ -105,29 +107,10 @@ const SignUp = () => {
               />
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="terms" 
-                checked={acceptTerms}
-                onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
-                required
-                className="data-[state=checked]:bg-lavender data-[state=checked]:border-lavender"
-              />
-              <label 
-                htmlFor="terms" 
-                className="text-sm text-muted-foreground cursor-pointer"
-              >
-                I accept the{" "}
-                <Link to="/terms" className="text-lavender hover:underline">Terms of Service</Link>
-                {" "}and{" "}
-                <Link to="/privacy" className="text-lavender hover:underline">Privacy Policy</Link>
-              </label>
-            </div>
-            
             <Button 
               type="submit" 
               className="w-full bg-lavender hover:bg-lavender/90 text-white" 
-              disabled={loading || !acceptTerms}
+              disabled={loading}
             >
               {loading ? (
                 <>

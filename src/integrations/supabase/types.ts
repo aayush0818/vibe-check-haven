@@ -9,6 +9,77 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      email_logs: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          sent_at: string | null
+          sent_to: string
+          status: string | null
+          subject: string
+          template_id: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          sent_at?: string | null
+          sent_to: string
+          status?: string | null
+          subject: string
+          template_id?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          sent_at?: string | null
+          sent_to?: string
+          status?: string | null
+          subject?: string
+          template_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_templates: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          name: string
+          subject: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          name: string
+          subject: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          subject?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       mood_entries: {
         Row: {
           date: string
@@ -56,25 +127,28 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           bio: string | null
           created_at: string | null
           display_name: string | null
-          id: number
-          user_id: string | null
+          id: string
+          updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
           display_name?: string | null
-          id?: never
-          user_id?: string | null
+          id: string
+          updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
           display_name?: string | null
-          id?: never
-          user_id?: string | null
+          id?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
